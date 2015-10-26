@@ -1,0 +1,6 @@
+This is the README for SHOOT, the backend library for
+a soccer scheduling program.  The idea is to enable quick and 
+efficient scheduling of practice for teams in the season
+with good scalability (hopefully).
+
+
