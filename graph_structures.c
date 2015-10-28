@@ -122,6 +122,8 @@ int read_entries(FILE * input_file)
     teams[counter].team_name = strdup(temp_team_name);
     teams[counter].coach_name = strdup(transfer_coach);
     teams[counter].team_id = counter;
+    teams[counter].number_of_edges = 0;
+    teams[counter].edges = NULL;
 
     int ret_coach_id = _check_coach_name(first_coach, teams[counter].coach_name);
     teams[counter].coach_id = ret_coach_id;
@@ -149,4 +151,69 @@ void print_team_node_info()
     printf("\n");
   }
   
+}
+
+// Return 1 on success, 0 on failure.  We are placeing on the source node.
+static int _set_edge_on_node(int dest_offset, int source_offset)
+{
+  shoot_edge_ptr new_edge = malloc(sizeof(shoot_edge));
+  if(!new_edge)
+  {
+    fprintf(stderr, "Error: ran out of memory while allocating edge!\n");
+    return 0;
+  }
+
+  // We are setting the new_edge to the correct place in the if statements here
+  if(teams[source_offset].number_of_edges == 0)
+  {
+    teams[source_offset].edges = new_edge;
+  }
+  else
+  {
+    shoot_edge_ptr temp_edge = teams[source_offset].edges;
+    for(int j = 0; j < (teams[source_offset].number_of_edges - 1); ++j)
+    {
+      temp_edge = temp_edge->next;
+    }
+    if(temp_edge->next)
+    {
+      fprintf(stderr, "Error: set edge on node algorithm failing to find last edge!\n");
+      return 0;
+    }
+    temp_edge->next = new_edge;
+  }
+
+  teams[source_offset].number_of_edges++;
+
+  new_edge->team_id = dest_offset;
+  new_edge->other_node = teams + dest_offset;
+  new_edge->next = NULL;
+  return 1;
+}
+    
+
+static int _make_edges_by_coach()
+{
+  for(int i = 0; i < number_of_teams; ++i)
+  {
+    if(teams[i].coach_id < i)
+    {
+      
+      int earliest_coach = teams[i].coach_id;
+      _set_edge_on_node(i, earliest_coach);
+      _set_edge_on_node(earliest_coach, i);
+
+
+      }
+
+
+  }
+  return 0;
+}
+
+int make_shoot_subgraphs()
+{
+  _make_edges_by_coach();
+  
+  return 0;
 }
