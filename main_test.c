@@ -21,5 +21,7 @@ int main(int argc, char** argv)
 
   read_entries(input_file);
 
+  print_team_node_info();
+
   return 0;
 }

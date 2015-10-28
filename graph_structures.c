@@ -40,12 +40,28 @@ static int _check_coach_name(coach_id_map_llist * first_coach, char * coach_name
   coach_id_map_llist * new_coach = malloc(sizeof(coach_id_map_llist));
   current_coach->next = new_coach;
   new_coach->coach_name = coach_name;
-  new_coach->coach_id = current_coach->coach_id++;
+  new_coach->coach_id = current_coach->coach_id + 1;
   new_coach->next = NULL;
 
   return new_coach->coach_id;
 
 }
+
+
+static void _free_coach_linked_list(coach_id_map_llist * first_coach)
+{
+  coach_id_map_llist * next_coach = first_coach->next;
+  while(next_coach)
+  {
+    free(first_coach);
+    first_coach = next_coach;
+    next_coach = first_coach->next;
+  }
+
+  free(first_coach);
+
+}
+
 
 int read_entries(FILE * input_file)
 {
@@ -81,6 +97,7 @@ int read_entries(FILE * input_file)
   //Dynamically allocate space for the number of teams
   number_of_teams = counter;
   teams = malloc(number_of_teams * sizeof(team_node));
+
   if(!teams)
   {
     fprintf(stderr, "Error: malloc failed to initialize team nodes!\n");
@@ -107,12 +124,13 @@ int read_entries(FILE * input_file)
     teams[counter].team_id = counter;
 
     int ret_coach_id = _check_coach_name(first_coach, teams[counter].coach_name);
-    printf("%s\tCoach ID: %d\n", teams[counter].coach_name, ret_coach_id);
     teams[counter].coach_id = ret_coach_id;
 
     ++counter;
-    //printf("%s\t%s\n", temp_team_name, transfer_coach);
   }
+
+  //Cleaning up here...
+  _free_coach_linked_list(first_coach);
 
 
   return 1;
@@ -121,5 +139,14 @@ int read_entries(FILE * input_file)
 
 void print_team_node_info()
 {
-  return;
+
+  for(int i = 0; i < number_of_teams; ++i)
+  {
+    printf("Team Name: %s\n", teams[i].team_name);
+    printf("Coach's Name: %s\n", teams[i].coach_name);
+    printf("Team ID: %d\n", teams[i].team_id);
+    printf("Coach ID: %d\n", teams[i].coach_id);
+    printf("\n");
+  }
+  
 }
