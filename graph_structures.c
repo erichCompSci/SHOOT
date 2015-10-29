@@ -148,7 +148,21 @@ void print_team_node_info()
     printf("Coach's Name: %s\n", teams[i].coach_name);
     printf("Team ID: %d\n", teams[i].team_id);
     printf("Coach ID: %d\n", teams[i].coach_id);
-    printf("\n");
+    printf("*****************************\n");
+    printf("Number of edges: %d\n", teams[i].number_of_edges);
+    for(int j = 0; j < teams[i].number_of_edges; ++j)
+    {
+      shoot_edge curr_edge = teams[i].edges[j];
+      printf("Edge to: %d\t", curr_edge.team_id);
+      printf("Confirmed: ");
+      if((teams + curr_edge.team_id) == curr_edge.other_node)
+      {
+        printf("Yes\n");
+      }
+      else
+        printf("No\n");
+    }
+    printf("*******************************\n\n");
   }
   
 }
@@ -190,23 +204,51 @@ static int _set_edge_on_node(int dest_offset, int source_offset)
   new_edge->next = NULL;
   return 1;
 }
+
+static int _find_earliest_coach(int coach_id)
+{
+  int current_id_test = teams[coach_id].coach_id;
+  int current_i_value = coach_id;
+
+  if(current_id_test == coach_id)
+    return coach_id;
+  while(current_id_test != coach_id)
+  {
+    current_i_value++;
+    current_id_test = teams[current_i_value].coach_id;
+  }
+  return current_i_value;
+
+}
     
 
 static int _make_edges_by_coach()
 {
+  int next_coach_id = 0;
   for(int i = 0; i < number_of_teams; ++i)
   {
-    if(teams[i].coach_id < i)
+    if(teams[i].coach_id < next_coach_id)
     {
+      int earliest_coach = _find_earliest_coach(teams[i].coach_id);
       
-      int earliest_coach = teams[i].coach_id;
+      if(teams[earliest_coach].number_of_edges > 0)
+      {
+        for(int j = 0; j < teams[earliest_coach].number_of_edges; ++j)
+        {
+          shoot_edge_ptr current_edge = teams[earliest_coach].edges + j;
+          int which_node = current_edge->team_id;
+          _set_edge_on_node(i, which_node);
+          _set_edge_on_node(which_node, i);
+        }
+      }
+
       _set_edge_on_node(i, earliest_coach);
       _set_edge_on_node(earliest_coach, i);
 
 
-      }
-
-
+    } 
+    else
+      next_coach_id++;
   }
   return 0;
 }

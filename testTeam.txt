@@ -21,6 +21,7 @@
 04BExcel		Ionel Felecan
 04BGold		Jamie Macdonald
 04BSilver		Michael Davis
+TestTeam    Erich Lohrmann
 
 08GElite		Virginia Cainion
 07GElite		Brian Stoddart
@@ -35,4 +36,5 @@
 04GElite		John Downey
 04GPremier		Ham Patel
 04GExcel		Steve Gibbs
+TestTeam2   Erich Lohrmann
 

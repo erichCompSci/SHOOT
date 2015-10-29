@@ -21,6 +21,8 @@ int main(int argc, char** argv)
 
   read_entries(input_file);
 
+  make_shoot_subgraphs();
+
   print_team_node_info();
 
   return 0;
