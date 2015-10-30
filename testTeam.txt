@@ -1,40 +1,40 @@
-﻿08BRed		Rob Hajnal
-08BWhite		Frank Williamson
-08BBlue		Rob Hajnal
-07BElite		Sean Howe
-07BPremier		Cliff Chestnut
-07BExcel		Stephen Barnes
-07BGold		Jamie Macdonald
-07BSilver		Corie Hyde
-06BElite		Daniel Munoz
-06BPremier		Ionel Felecan
-06BExcel		Ivan Morales
-06BGold		Erich Lohrmann
-06BSilver		Sead Kadragic
-05BElite		Sean Howe
-05BPremier		Ace Epstein
-05BExcel		Josh DiGiovanni
-05BGold		George Sheppard
-05BSilver		Corey Hyde
-04BElite		Daniel Munoz
-04BPremier		Boki Fridman
-04BExcel		Ionel Felecan
-04BGold		Jamie Macdonald
-04BSilver		Michael Davis
-TestTeam    Erich Lohrmann
+﻿08B Red		Rob Hajnal
+08B White		Frank Williamson
+08B Blue		Rob Hajnal
+07B Elite		Sean Howe
+07B Premier		Cliff Chestnut
+07B Excel		Stephen Barnes
+07B Gold		Jamie Macdonald
+07B Silver		Corie Hyde
+06B Elite		Daniel Munoz
+06B Premier		Ionel Felecan
+06B Excel		Ivan Morales
+06B Gold		Erich Lohrmann
+06B Silver		Sead Kadragic
+05B Elite		Sean Howe
+05B Premier		Ace Epstein
+05B Excel		Josh DiGiovanni
+05B Gold		George Sheppard
+05B Silver		Corey Hyde
+04B Elite		Daniel Munoz
+04B Premier		Boki Fridman
+04B Excel		Ionel Felecan
+04B Gold		Jamie Macdonald
+04B Silver		Michael Davis
+03B Premier    Erich Lohrmann
 
-08GElite		Virginia Cainion
-07GElite		Brian Stoddart
-07GPremier		Andrew Intaphan
-06GElite		John Downey
-06GPremier		Andrew Intaphan
-06GExcel		Hong Chin
-05GElite		Patrick Rogers
-05GPremier		Steve Gibbs
-05GExcel		Taylor Parks
-05GGold		Hong Chin
-04GElite		John Downey
-04GPremier		Ham Patel
-04GExcel		Steve Gibbs
-TestTeam2   Erich Lohrmann
+08G Elite		Virginia Cainion
+07G Elite		Brian Stoddart
+07G Premier		Andrew Intaphan
+06G Elite		John Downey
+06G Premier		Andrew Intaphan
+06G Excel		Hong Chin
+05G Elite		Patrick Rogers
+05G Premier		Steve Gibbs
+05G Excel		Taylor Parks
+05G Gold		Hong Chin
+04G Elite		John Downey
+04G Premier		Ham Patel
+04G Excel		Steve Gibbs
+03G Elite   Erich Lohrmann
 

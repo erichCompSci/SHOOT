@@ -9,8 +9,10 @@ typedef struct _shoot_edge * shoot_edge_ptr, shoot_edge;
 
 typedef struct _team_node
 {
-  char * team_name;
+  char * team_age_group;
+  char * team_level_name;
   int team_id;
+  int team_level;          //The team level is 1 for Elite and 5 for Silver
   char * coach_name;
   int coach_id;
   shoot_edge_ptr edges;

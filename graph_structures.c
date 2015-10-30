@@ -62,16 +62,42 @@ static void _free_coach_linked_list(coach_id_map_llist * first_coach)
 
 }
 
+static int _get_team_level(char * team_level_name)
+{
+  if(!strcmp("Elite", team_level_name))
+    return 1;
+  else if(!strcmp("Premier", team_level_name))
+    return 2;
+  else if(!strcmp("Excel", team_level_name))
+    return 3;
+  else if(!strcmp("Gold", team_level_name))
+    return 4;
+  else if(!strcmp("Silver", team_level_name))
+    return 5;
+
+  if(!strcmp("Red", team_level_name))
+    return 1;
+  else if(!strcmp("White", team_level_name))
+    return 2;
+  else if(!strcmp("Blue", team_level_name))
+    return 3;
+
+  fprintf(stderr, "No identifiable level for: %s\n", team_level_name);
+  return -1;
+
+}
+
 
 int read_entries(FILE * input_file)
 {
   char temp_team_name[50];
+  char temp_team_level[25];
   char transfer_coach[50];
   char transfer_coach_last[25];
   int counter = 0;
 
   // First count the number of entries
-  while((fscanf(input_file, "%s", temp_team_name) != EOF))
+  while((fscanf(input_file, "%s%s", temp_team_name, temp_team_level ) != EOF))
   {
     if(fscanf(input_file, "%s%s", transfer_coach, transfer_coach_last) == EOF)
     {
@@ -108,7 +134,7 @@ int read_entries(FILE * input_file)
   coach_id_map_llist * first_coach = malloc(sizeof(coach_id_map_llist));
   first_coach->coach_name = NULL;
 
-  while((fscanf(input_file, "%s", temp_team_name) != EOF))
+  while((fscanf(input_file, "%s%s", temp_team_name, temp_team_level) != EOF))
   {
     if(fscanf(input_file, "%s%s", transfer_coach, transfer_coach_last) == EOF)
     {
@@ -116,14 +142,18 @@ int read_entries(FILE * input_file)
       exit(1);
     }
 
+
     strcat(transfer_coach, " ");
     strcat(transfer_coach, transfer_coach_last);
+    //strcat(temp_team_name, temp_team_level);
 
-    teams[counter].team_name = strdup(temp_team_name);
+    teams[counter].team_age_group = strdup(temp_team_name);
+    teams[counter].team_level_name = strdup(temp_team_level);
     teams[counter].coach_name = strdup(transfer_coach);
     teams[counter].team_id = counter;
     teams[counter].number_of_edges = 0;
     teams[counter].edges = NULL;
+    teams[counter].team_level = _get_team_level(temp_team_level);
 
     int ret_coach_id = _check_coach_name(first_coach, teams[counter].coach_name);
     teams[counter].coach_id = ret_coach_id;
@@ -144,9 +174,10 @@ void print_team_node_info()
 
   for(int i = 0; i < number_of_teams; ++i)
   {
-    printf("Team Name: %s\n", teams[i].team_name);
+    printf("Team Name: %s %s\n", teams[i].team_age_group, teams[i].team_level_name);
     printf("Coach's Name: %s\n", teams[i].coach_name);
     printf("Team ID: %d\n", teams[i].team_id);
+    printf("Team Level: %d\n", teams[i].team_level);
     printf("Coach ID: %d\n", teams[i].coach_id);
     printf("*****************************\n");
     printf("Number of edges: %d\n", teams[i].number_of_edges);
@@ -169,8 +200,8 @@ void print_team_node_info()
     }
     printf("*******************************\n\n");
   }
-  
 }
+
 
 // Return 1 on success, 0 on failure.  We are placeing on the source node.
 static int _set_edge_on_node(int dest_offset, int source_offset)
@@ -263,6 +294,20 @@ static int _make_edges_by_coach()
   return 1;
 }
 
+
+// Right now we're going to take advantage of the fact that 
+// we know what the list format is going to look like.  In the 
+// future we will probably have to add some hash map to make the
+// library more flexible
+static int _make_edges_by_level()
+{
+
+
+  return 1;
+}
+
+
+
 int make_shoot_subgraphs()
 {
   if(!_make_edges_by_coach())
@@ -271,8 +316,12 @@ int make_shoot_subgraphs()
     exit(1);
   }
 
-  
-  
+  if(!_make_edges_by_level())
+  {
+    fprintf(stderr, "Error: makeing edges by level failed!\n");
+    exit(1);
+  }
+
   return 1;
 }
 
@@ -294,7 +343,8 @@ void cleanup_graph()
       free(curr_edge);
     }
     //Free the names
-    free(teams[i].team_name);
+    free(teams[i].team_age_group);
+    free(teams[i].team_level_name);
     free(teams[i].coach_name);
     
   }
