@@ -21,9 +21,12 @@ int main(int argc, char** argv)
 
   read_entries(input_file);
 
-  make_shoot_subgraphs();
+  fclose(input_file);
 
+
+  make_shoot_subgraphs();
   print_team_node_info();
+  cleanup_graph();
 
   return 0;
 }

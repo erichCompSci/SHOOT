@@ -31,4 +31,6 @@ int read_entries(FILE * input_file);
 void print_team_node_info();
 
 int make_shoot_subgraphs();
+
+void cleanup_graph();
 #endif

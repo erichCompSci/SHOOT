@@ -226,7 +226,7 @@ static int _find_earliest_coach(int coach_id)
 
 }
     
-
+// 0 on failure, 1 on success
 static int _make_edges_by_coach()
 {
   int next_coach_id = 0;
@@ -243,26 +243,62 @@ static int _make_edges_by_coach()
 
           shoot_edge_ptr current_edge = teams[earliest_coach].edges + j;
           int which_node = current_edge->team_id;
-          _set_edge_on_node(i, which_node);
-          _set_edge_on_node(which_node, i);
+          if(!_set_edge_on_node(i, which_node))
+            return 0;
+          if(!_set_edge_on_node(which_node, i))
+            return 0;
 
         }
       }
 
-      _set_edge_on_node(i, earliest_coach);
-      _set_edge_on_node(earliest_coach, i);
-
+      if(!_set_edge_on_node(i, earliest_coach))
+        return 0;
+      if(!_set_edge_on_node(earliest_coach, i))
+        return 0;
 
     } 
     else
       next_coach_id++;
   }
-  return 0;
+  return 1;
 }
 
 int make_shoot_subgraphs()
 {
-  _make_edges_by_coach();
+  if(!_make_edges_by_coach())
+  {
+    fprintf(stderr, "Error: makeing edges for coaches failed!\n");
+    exit(1);
+  }
+
   
-  return 0;
+  
+  return 1;
+}
+
+
+// 1 on success, 0 on failure
+void cleanup_graph()
+{
+  for (int i = 0; i < number_of_teams; ++i)
+  {
+    // Free the edges
+    team_node_ptr curr_team = teams + i;
+    for (int j = curr_team->number_of_edges; j > 0; j--)
+    {
+      shoot_edge_ptr curr_edge = curr_team->edges;
+      for(int k = 1; k < j; ++k)
+      {
+        curr_edge = curr_edge->next;
+      }
+      free(curr_edge);
+    }
+    //Free the names
+    free(teams[i].team_name);
+    free(teams[i].coach_name);
+    
+  }
+  // Free the nodes
+  free(teams);
+
 }
