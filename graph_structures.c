@@ -152,10 +152,15 @@ void print_team_node_info()
     printf("Number of edges: %d\n", teams[i].number_of_edges);
     for(int j = 0; j < teams[i].number_of_edges; ++j)
     {
-      shoot_edge curr_edge = teams[i].edges[j];
-      printf("Edge to: %d\t", curr_edge.team_id);
+      //We have to follow the pointers to get the right edge
+      shoot_edge_ptr curr_edge = teams[i].edges;
+      for(int k = 0; k < j; ++k)
+      {
+        curr_edge = curr_edge->next;
+      }
+      printf("Edge to: %d\t", curr_edge->team_id);
       printf("Confirmed: ");
-      if((teams + curr_edge.team_id) == curr_edge.other_node)
+      if((teams + curr_edge->team_id) == curr_edge->other_node)
       {
         printf("Yes\n");
       }
@@ -235,10 +240,12 @@ static int _make_edges_by_coach()
       {
         for(int j = 0; j < teams[earliest_coach].number_of_edges; ++j)
         {
+
           shoot_edge_ptr current_edge = teams[earliest_coach].edges + j;
           int which_node = current_edge->team_id;
           _set_edge_on_node(i, which_node);
           _set_edge_on_node(which_node, i);
+
         }
       }
 
