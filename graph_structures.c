@@ -95,7 +95,9 @@ int read_entries(FILE * input_file)
   char transfer_coach[50];
   char transfer_coach_last[25];
   int counter = 0;
+  char trash[25];
 
+  fscanf(input_file, "%s", trash);
   // First count the number of entries
   while((fscanf(input_file, "%s%s", temp_team_name, temp_team_level ) != EOF))
   {
@@ -119,6 +121,7 @@ int read_entries(FILE * input_file)
 
   // Rewind to the beginning of the file
   rewind(input_file);
+  fscanf(input_file, "%s", trash);
 
   //Dynamically allocate space for the number of teams
   number_of_teams = counter;
@@ -301,7 +304,56 @@ static int _make_edges_by_coach()
 // library more flexible
 static int _make_edges_by_level()
 {
+  for(int i = 0; i < number_of_teams; ++i)
+  {
+    team_node_ptr curr_team = teams + i;
+    int next_index = i + 1;
+    team_node_ptr next_team = teams + next_index;
 
+    while(next_index < number_of_teams && (!(strncmp(next_team->team_age_group, curr_team->team_age_group, 3))))
+    {
+      if(!next_team)
+      {
+        fprintf(stderr, "Error: no next team in makeing edges by level!\n");
+        return 0;
+      }
+
+      if(( next_team->team_level - curr_team->team_level) > 1)
+      {
+        //We need to make sure their isn't already an edge between the two teams
+        int should_we_add = 1;
+        for(int j = curr_team->number_of_edges; j > 0; j--)
+        {
+          shoot_edge_ptr curr_edge = curr_team->edges;
+          int k = 1;
+          while(k != j)
+          {
+            curr_edge = curr_edge->next;
+            ++k;
+          }
+          if(!curr_edge)
+          {
+            fprintf(stderr, "Error: current edge is invalid when trying to check for duplicates in level edging!\n");
+            return 0;
+          }
+          if(curr_edge->team_id == next_team->team_id)
+            should_we_add = 0;
+        }
+        // End check
+
+        if(should_we_add)
+        {
+          if(!_set_edge_on_node(curr_team->team_id, next_team->team_id))
+             return 0;
+          if(!_set_edge_on_node(next_team->team_id, curr_team->team_id))
+             return 0;
+        }
+      }
+      next_index++;
+      next_team = teams + next_index;
+    }
+
+  }
 
   return 1;
 }
