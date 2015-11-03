@@ -1,5 +1,7 @@
-1) I need to make edges between teams of different skill levels
-2) Take a look at the graphs, how many subgraphs how connected is the overall graph
-3) I need some type of field and size reporting function...but this will go into the
+1) I need some type of field and size reporting function...but this will go into the
    coloring algorithm
-4) I need to take an initial stab at the coloring algorithm
+2) I need to take an initial stab at the coloring algorithm
+   - I've decided on a greedy algorithm, I rebuilt my underlying data structure to make it easier
+     to merge nodes and have two teams at the same location
+
+
