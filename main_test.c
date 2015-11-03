@@ -26,6 +26,7 @@ int main(int argc, char** argv)
 
   make_shoot_subgraphs();
   print_team_node_info();
+  print_graph_representation();
   cleanup_graph();
 
   return 0;

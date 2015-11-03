@@ -125,13 +125,8 @@ int read_entries(FILE * input_file)
 
   //Dynamically allocate space for the number of teams
   number_of_teams = counter;
-  teams = malloc(number_of_teams * sizeof(team_node));
-
-  if(!teams)
-  {
-    fprintf(stderr, "Error: malloc failed to initialize team nodes!\n");
-    exit(1);
-  }
+  //teams = malloc(number_of_teams * sizeof(team_node));
+  //teams = malloc(sizeof(team_node));
 
   counter = 0;
   coach_id_map_llist * first_coach = malloc(sizeof(coach_id_map_llist));
@@ -148,18 +143,44 @@ int read_entries(FILE * input_file)
 
     strcat(transfer_coach, " ");
     strcat(transfer_coach, transfer_coach_last);
-    //strcat(temp_team_name, temp_team_level);
+    team_node_ptr curr_team = teams;
+    while(curr_team && curr_team->next)
+      curr_team = curr_team->next;
 
-    teams[counter].team_age_group = strdup(temp_team_name);
-    teams[counter].team_level_name = strdup(temp_team_level);
-    teams[counter].coach_name = strdup(transfer_coach);
-    teams[counter].team_id = counter;
-    teams[counter].number_of_edges = 0;
-    teams[counter].edges = NULL;
-    teams[counter].team_level = _get_team_level(temp_team_level);
 
-    int ret_coach_id = _check_coach_name(first_coach, teams[counter].coach_name);
-    teams[counter].coach_id = ret_coach_id;
+    if(!curr_team)
+    {
+      curr_team = malloc(sizeof(team_node));
+      if(!curr_team)
+      {
+        fprintf(stderr, "Error: could not allocate team node!\n");
+        exit(1);
+      }
+      teams = curr_team;
+    } 
+    else
+    {
+      curr_team->next = malloc(sizeof(team_node));
+      if(!curr_team->next)
+      {
+        fprintf(stderr, "Error: could not allocate team node!\n");
+        exit(1);
+      }
+      curr_team = curr_team->next;
+    }
+
+    curr_team->team_age_group = strdup(temp_team_name);
+    curr_team->team_level_name = strdup(temp_team_level);
+    curr_team->coach_name = strdup(transfer_coach);
+    curr_team->team_id = counter;
+    curr_team->number_of_edges = 0;
+    curr_team->edges = NULL;
+    curr_team->team_level = _get_team_level(temp_team_level);
+
+    int ret_coach_id = _check_coach_name(first_coach, curr_team->coach_name);
+    curr_team->coach_id = ret_coach_id;
+    //Set up the next node
+    curr_team->next = NULL;
 
     ++counter;
   }
@@ -174,27 +195,31 @@ int read_entries(FILE * input_file)
 
 void print_team_node_info()
 {
-
-  for(int i = 0; i < number_of_teams; ++i)
+  team_node_ptr curr_team = teams;
+  while(curr_team)
   {
-    printf("Team Name: %s %s\n", teams[i].team_age_group, teams[i].team_level_name);
-    printf("Coach's Name: %s\n", teams[i].coach_name);
-    printf("Team ID: %d\n", teams[i].team_id);
-    printf("Team Level: %d\n", teams[i].team_level);
-    printf("Coach ID: %d\n", teams[i].coach_id);
+    printf("Team Name: %s %s\n", curr_team->team_age_group, curr_team->team_level_name);
+    printf("Coach's Name: %s\n", curr_team->coach_name);
+    printf("Team ID: %d\n", curr_team->team_id);
+    printf("Team Level: %d\n", curr_team->team_level);
+    printf("Coach ID: %d\n", curr_team->coach_id);
     printf("*****************************\n");
-    printf("Number of edges: %d\n", teams[i].number_of_edges);
-    for(int j = 0; j < teams[i].number_of_edges; ++j)
+    printf("Number of edges: %d\n", curr_team->number_of_edges);
+    for(int j = 0; j < curr_team->number_of_edges; ++j)
     {
       //We have to follow the pointers to get the right edge
-      shoot_edge_ptr curr_edge = teams[i].edges;
+      shoot_edge_ptr curr_edge = curr_team->edges;
       for(int k = 0; k < j; ++k)
       {
         curr_edge = curr_edge->next;
       }
       printf("Edge to: %d\t", curr_edge->team_id);
       printf("Confirmed: ");
-      if((teams + curr_edge->team_id) == curr_edge->other_node)
+      team_node_ptr conf_node = teams;
+      for(int z = 0; z < curr_edge->team_id; ++z)
+        conf_node = conf_node->next;
+
+      if(conf_node == curr_edge->other_node)
       {
         printf("Yes\n");
       }
@@ -202,7 +227,57 @@ void print_team_node_info()
         printf("No\n");
     }
     printf("*******************************\n\n");
+    curr_team = curr_team->next;
   }
+
+}
+
+
+void print_graph_representation()
+{
+  FILE * output = NULL;
+  output = fopen("the_graph.dot", "w");
+  if(!output)
+  {
+    fprintf(stderr, "Error: could not open the_graph.dot!\n");
+    return;
+  }
+
+  fprintf(output, "digraph graph_representation {\n");
+  fprintf(output, "  edge [dir=none]\n");
+
+  team_node_ptr curr_node = teams;
+  while(curr_node)
+  {
+    if(curr_node->number_of_edges == 0)
+    {
+      fprintf(output, "  %d\n", curr_node->team_id);
+    }
+    else
+    {
+      for(int j = curr_node->number_of_edges; j > 0; --j)
+      {
+        shoot_edge_ptr curr_edge = curr_node->edges;
+        int k = 1;
+        while(k < j)
+        {
+          curr_edge = curr_edge->next;
+          ++k;
+        }
+        
+        if(curr_edge->team_id > curr_node->team_id)
+        {
+          fprintf(output, "  %d->%d\n", curr_node->team_id, curr_edge->team_id);
+        }
+      }
+    }
+    curr_node = curr_node->next;
+  }
+
+  fprintf(output, "}");
+  fclose(output);
+
+
 }
 
 
@@ -216,15 +291,24 @@ static int _set_edge_on_node(int dest_offset, int source_offset)
     return 0;
   }
 
+  //Get the correct nodes
+  team_node_ptr source_node = teams;
+  for(int i = 0; i < source_offset; ++i)
+    source_node = source_node->next;
+
+  team_node_ptr dest_node = teams;
+  for(int i = 0; i < dest_offset; ++i)
+    dest_node = dest_node->next;
+
   // We are setting the new_edge to the correct place in the if statements here
-  if(teams[source_offset].number_of_edges == 0)
+  if(source_node->number_of_edges == 0)
   {
-    teams[source_offset].edges = new_edge;
+    source_node->edges = new_edge;
   }
   else
   {
-    shoot_edge_ptr temp_edge = teams[source_offset].edges;
-    for(int j = 0; j < (teams[source_offset].number_of_edges - 1); ++j)
+    shoot_edge_ptr temp_edge = source_node->edges;
+    for(int j = 0; j < (source_node->number_of_edges - 1); ++j)
     {
       temp_edge = temp_edge->next;
     }
@@ -236,27 +320,27 @@ static int _set_edge_on_node(int dest_offset, int source_offset)
     temp_edge->next = new_edge;
   }
 
-  teams[source_offset].number_of_edges++;
+  source_node->number_of_edges++;
 
   new_edge->team_id = dest_offset;
-  new_edge->other_node = teams + dest_offset;
+  new_edge->other_node = dest_node;
   new_edge->next = NULL;
   return 1;
 }
 
-static int _find_earliest_coach(int coach_id)
+static team_node_ptr _find_earliest_coach(int coach_id)
 {
-  int current_id_test = teams[coach_id].coach_id;
-  int current_i_value = coach_id;
+  team_node_ptr curr_team = teams;
+  for(int i = 0; i < coach_id; ++i)
+    curr_team = curr_team->next;
 
-  if(current_id_test == coach_id)
-    return coach_id;
-  while(current_id_test != coach_id)
+  if(curr_team->coach_id == coach_id)
+    return curr_team;
+  while(curr_team->coach_id != coach_id)
   {
-    current_i_value++;
-    current_id_test = teams[current_i_value].coach_id;
+    curr_team = curr_team->next;
   }
-  return current_i_value;
+  return curr_team;
 
 }
     
@@ -264,35 +348,39 @@ static int _find_earliest_coach(int coach_id)
 static int _make_edges_by_coach()
 {
   int next_coach_id = 0;
-  for(int i = 0; i < number_of_teams; ++i)
+  team_node_ptr curr_team = teams;
+  while(curr_team)
   {
-    if(teams[i].coach_id < next_coach_id)
+    if(curr_team->coach_id < next_coach_id)
     {
-      int earliest_coach = _find_earliest_coach(teams[i].coach_id);
+      team_node_ptr earliest_coach = _find_earliest_coach(curr_team->coach_id);
       
-      if(teams[earliest_coach].number_of_edges > 0)
+      if(earliest_coach->number_of_edges > 0)
       {
-        for(int j = 0; j < teams[earliest_coach].number_of_edges; ++j)
+        shoot_edge_ptr current_edge = earliest_coach->edges;
+        while(current_edge)
         {
-
-          shoot_edge_ptr current_edge = teams[earliest_coach].edges + j;
           int which_node = current_edge->team_id;
-          if(!_set_edge_on_node(i, which_node))
+          if(!_set_edge_on_node(curr_team->team_id, which_node))
             return 0;
-          if(!_set_edge_on_node(which_node, i))
+          if(!_set_edge_on_node(which_node, curr_team->team_id))
             return 0;
+
+          current_edge = current_edge->next;
 
         }
       }
 
-      if(!_set_edge_on_node(i, earliest_coach))
+      if(!_set_edge_on_node(curr_team->team_id, earliest_coach->team_id))
         return 0;
-      if(!_set_edge_on_node(earliest_coach, i))
+      if(!_set_edge_on_node(earliest_coach->team_id, curr_team->team_id))
         return 0;
 
     } 
     else
       next_coach_id++;
+
+    curr_team = curr_team->next;
   }
   return 1;
 }
@@ -304,20 +392,13 @@ static int _make_edges_by_coach()
 // library more flexible
 static int _make_edges_by_level()
 {
-  for(int i = 0; i < number_of_teams; ++i)
+  team_node_ptr curr_team = teams;
+  while(curr_team)
   {
-    team_node_ptr curr_team = teams + i;
-    int next_index = i + 1;
-    team_node_ptr next_team = teams + next_index;
+    team_node_ptr next_team = curr_team->next;
 
-    while(next_index < number_of_teams && (!(strncmp(next_team->team_age_group, curr_team->team_age_group, 3))))
+    while(next_team && (!(strncmp(next_team->team_age_group, curr_team->team_age_group, 3))))
     {
-      if(!next_team)
-      {
-        fprintf(stderr, "Error: no next team in makeing edges by level!\n");
-        return 0;
-      }
-
       if(( next_team->team_level - curr_team->team_level) > 1)
       {
         //We need to make sure their isn't already an edge between the two teams
@@ -337,7 +418,10 @@ static int _make_edges_by_level()
             return 0;
           }
           if(curr_edge->team_id == next_team->team_id)
+          {
             should_we_add = 0;
+            break;
+          }
         }
         // End check
 
@@ -349,9 +433,9 @@ static int _make_edges_by_level()
              return 0;
         }
       }
-      next_index++;
-      next_team = teams + next_index;
+      next_team = next_team->next;
     }
+    curr_team = curr_team->next;
 
   }
 
@@ -381,10 +465,10 @@ int make_shoot_subgraphs()
 // 1 on success, 0 on failure
 void cleanup_graph()
 {
-  for (int i = 0; i < number_of_teams; ++i)
+  team_node_ptr curr_team = teams;
+  while(curr_team)
   {
     // Free the edges
-    team_node_ptr curr_team = teams + i;
     for (int j = curr_team->number_of_edges; j > 0; j--)
     {
       shoot_edge_ptr curr_edge = curr_team->edges;
@@ -395,12 +479,15 @@ void cleanup_graph()
       free(curr_edge);
     }
     //Free the names
-    free(teams[i].team_age_group);
-    free(teams[i].team_level_name);
-    free(teams[i].coach_name);
+    free(curr_team->team_age_group);
+    free(curr_team->team_level_name);
+    free(curr_team->coach_name);
+    
+    team_node_ptr temp_ptr = curr_team;
+    curr_team = curr_team->next;
+    free(temp_ptr);
     
   }
   // Free the nodes
-  free(teams);
 
 }

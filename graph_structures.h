@@ -7,7 +7,9 @@
 
 typedef struct _shoot_edge * shoot_edge_ptr, shoot_edge;
 
-typedef struct _team_node
+typedef struct _team_node * team_node_ptr, team_node;
+
+struct _team_node
 {
   char * team_age_group;
   char * team_level_name;
@@ -17,8 +19,9 @@ typedef struct _team_node
   int coach_id;
   shoot_edge_ptr edges;
   int number_of_edges;
+  team_node_ptr next;
 
-} * team_node_ptr, team_node;
+};
 
 struct _shoot_edge
 {
@@ -31,6 +34,8 @@ struct _shoot_edge
 int read_entries(FILE * input_file);
 
 void print_team_node_info();
+
+void print_graph_representation();
 
 int make_shoot_subgraphs();
 
