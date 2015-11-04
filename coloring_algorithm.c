@@ -19,6 +19,8 @@ static int _get_size_of_graph(team_node_ptr teams)
 int _make_subgraph_list(shoot_subgraph_ptr curr_list, team_node_ptr curr_team, int * nodes_assigned, int total_nodes)
 {
   team_node_ptr queue_to_handle = malloc(sizeof(team_node));
+  team_node_ptr curr_unassigned = queue_to_handle;
+  team_node_ptr last_in_queue;
   if(!queue_to_handle)
   {
     fprintf(stderr, "Error: could not allocate extra team node for queue!\n");
@@ -28,18 +30,63 @@ int _make_subgraph_list(shoot_subgraph_ptr curr_list, team_node_ptr curr_team, i
   memcpy(queue_to_handle, curr_team, sizeof(team_node));
   queue_to_handle->next = NULL;
   
-  while(queue_to_handle)
+  while(curr_unassigned)
   {
     if(curr_list->number_of_nodes == 0)
     {
-      curr_list->number_of_nodes++;
-      curr_list->teams = queue_to_handle
-    
+      curr_list->teams = curr_unassigned; 
+      last_in_queue = curr_unassigned;
+    }
 
+    curr_list->number_of_nodes++;
+
+    shoot_edge_ptr curr_edge = queue_to_handle->edges;
+    while(curr_edge)
+    {
+      //Check to make sure the other node isn't in place already
+      team_node_ptr temp_check = queue_to_handle;
+      while(temp_check)
+      {
+        if(temp_check->team_id == curr_edge->team_id)
+          break;
+
+        temp_check = temp_check->next;
+      }
+      
+      if(temp_check)
+      {
+        curr_edge = curr_edge->next;
+        continue;
+      }
+
+      //If we reach this point, we must add the node to the queue
+      team_node_ptr copied_object = malloc(sizeof(team_node));
+      if(!copied_object)
+      {
+        fprintf(stderr, "Error: could not allocate team node data struct!\n");
+        return 0;
+      }
+      memcpy(copied_object, curr_edge->other_node, sizeof(team_node));
+
+      last_in_queue->next = copied_object;
+      copied_object->next = NULL;
+
+      last_in_queue = copied_object;
+      curr_list->number_of_nodes++;
+
+      nodes_assigned[curr_edge->team_id] = 1;
+
+      curr_edge = curr_edge->next;
+      // A little bookeeping for speed...
+
+    }
+
+    curr_unassigned = curr_unassigned->next;
   }
-    
+  return 1;
 
 }
+
 
 shoot_subgraph_ptr make_subgraphs(team_node_ptr teams)
 {
@@ -102,14 +149,15 @@ shoot_subgraph_ptr make_subgraphs(team_node_ptr teams)
     }
 
     
-    _make_subgraph_list(curr_subgraph, curr_team, nodes_assigned, size_of_all_graphs);
-    
-    
-      
+    if(!_make_subgraph_list(curr_subgraph, curr_team, nodes_assigned, size_of_all_graphs))
+    {
+      fprintf(stderr, "Error: could not make subgraph on team: %d\n", curr_team->team_id);
+      return NULL;
+    }
+
     
   }
-  
-  
 
-
+  return first_subgraph;
+  
 }

@@ -2,6 +2,7 @@
 
 static int number_of_teams;
 static team_node_ptr teams;
+static shoot_subgraph_ptr subgraphs;
 
 typedef struct _coach_id_map_llist coach_id_map_llist;
 
@@ -276,8 +277,27 @@ void print_graph_representation()
 
   fprintf(output, "}");
   fclose(output);
+}
 
 
+void print_subgraph_info()
+{
+  shoot_subgraph_ptr curr_subgraph = subgraphs;
+  int counter = 0;
+  while(curr_subgraph)
+  {
+    printf("Printing info for subgraph: %d\n", counter);
+    printf("Number of nodes: %d\n", curr_subgraph->number_of_nodes);
+    printf("Teams involved: ");
+    team_node_ptr curr_team = curr_subgraph->teams;
+    while(curr_team)
+    {
+      printf("%d ", curr_team->team_id);
+      curr_team = curr_team->next;
+    }
+    printf("\n\n");
+    curr_subgraph = curr_subgraph->next;
+  }
 }
 
 
@@ -444,7 +464,7 @@ static int _make_edges_by_level()
 
 
 
-int make_shoot_subgraphs()
+int make_shoot_graph()
 {
   if(!_make_edges_by_coach())
   {
@@ -457,6 +477,9 @@ int make_shoot_subgraphs()
     fprintf(stderr, "Error: makeing edges by level failed!\n");
     exit(1);
   }
+
+  shoot_subgraph_ptr temp_ptr = make_subgraphs(teams);
+  subgraphs = temp_ptr;
 
   return 1;
 }

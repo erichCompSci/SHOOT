@@ -24,9 +24,11 @@ int main(int argc, char** argv)
   fclose(input_file);
 
 
-  make_shoot_subgraphs();
-  print_team_node_info();
-  print_graph_representation();
+  make_shoot_graph();
+  print_subgraph_info();
+  //print_team_node_info();
+  //print_graph_representation();
+
   cleanup_graph();
 
   return 0;
