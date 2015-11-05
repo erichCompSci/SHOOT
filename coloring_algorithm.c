@@ -36,6 +36,7 @@ int _make_subgraph_list(shoot_subgraph_ptr curr_list, team_node_ptr curr_team, i
     {
       curr_list->teams = curr_unassigned; 
       last_in_queue = curr_unassigned;
+      printf("First in a new list!\n");
     }
 
     curr_list->number_of_nodes++;
@@ -56,6 +57,7 @@ int _make_subgraph_list(shoot_subgraph_ptr curr_list, team_node_ptr curr_team, i
       if(temp_check)
       {
         curr_edge = curr_edge->next;
+        printf("Node: %d already in queue\n", temp_check->team_id);
         continue;
       }
 
@@ -72,7 +74,7 @@ int _make_subgraph_list(shoot_subgraph_ptr curr_list, team_node_ptr curr_team, i
       copied_object->next = NULL;
 
       last_in_queue = copied_object;
-      curr_list->number_of_nodes++;
+      //curr_list->number_of_nodes++;
 
       nodes_assigned[curr_edge->team_id] = 1;
 
@@ -108,11 +110,11 @@ shoot_subgraph_ptr make_subgraphs(team_node_ptr teams)
   for(int i = 0; i < size_of_all_graphs; ++i)
   {
     if(nodes_assigned[i])
+    {
+      printf("Skipping node: %d...already assigned\n", i);
       continue;
+    }
 
-    shoot_subgraph_ptr last_subgraph = first_subgraph;
-    while(last_subgraph && last_subgraph->next)
-      last_subgraph = last_subgraph->next;
 
     if(!first_subgraph)
     {
@@ -125,14 +127,19 @@ shoot_subgraph_ptr make_subgraphs(team_node_ptr teams)
       first_subgraph->number_of_nodes = 0;
       first_subgraph->teams = NULL;
       first_subgraph->next = NULL;
+      printf("First subgraph created!\n");
     }
 
+    shoot_subgraph_ptr last_subgraph = first_subgraph;
+    while(last_subgraph->next)
+      last_subgraph = last_subgraph->next;
 
     shoot_subgraph_ptr curr_subgraph;
     if(first_subgraph->number_of_nodes == 0)
       curr_subgraph = last_subgraph;
     else
     {
+      printf("Not the first subgraph!\n");
       curr_subgraph = malloc(sizeof(shoot_subgraph));
       if(!curr_subgraph)
       {
