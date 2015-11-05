@@ -81,6 +81,7 @@ int _make_subgraph_list(shoot_subgraph_ptr curr_list, team_node_ptr curr_team, i
 
     }
 
+    nodes_assigned[curr_unassigned->team_id] = 1;
     curr_unassigned = curr_unassigned->next;
   }
   return 1;
@@ -109,6 +110,10 @@ shoot_subgraph_ptr make_subgraphs(team_node_ptr teams)
     if(nodes_assigned[i])
       continue;
 
+    shoot_subgraph_ptr last_subgraph = first_subgraph;
+    while(last_subgraph && last_subgraph->next)
+      last_subgraph = last_subgraph->next;
+
     if(!first_subgraph)
     {
       first_subgraph = malloc(sizeof(shoot_subgraph));
@@ -121,13 +126,10 @@ shoot_subgraph_ptr make_subgraphs(team_node_ptr teams)
       first_subgraph->teams = NULL;
       first_subgraph->next = NULL;
     }
-    shoot_subgraph_ptr last_subgraph = first_subgraph;
 
-    while(last_subgraph->next)
-      last_subgraph = last_subgraph->next;
 
     shoot_subgraph_ptr curr_subgraph;
-    if(last_subgraph == first_subgraph)
+    if(first_subgraph->number_of_nodes == 0)
       curr_subgraph = last_subgraph;
     else
     {
