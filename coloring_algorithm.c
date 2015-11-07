@@ -172,6 +172,9 @@ shoot_subgraph_ptr make_subgraphs(team_node_ptr teams)
     
   }
 
+  //Free the array that was temporarily useful
+  free(nodes_assigned);
+
   return first_subgraph;
   
 }

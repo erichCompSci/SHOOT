@@ -511,6 +511,25 @@ void cleanup_graph()
     free(temp_ptr);
     
   }
-  // Free the nodes
+
+  shoot_subgraph_ptr curr_graph = subgraphs;
+  while(curr_graph)
+  {
+    //Free the inner nodes
+    team_node_ptr temp_ptr = curr_graph->teams;
+    while(temp_ptr)
+    {
+      team_node_ptr temp_ptr2 = temp_ptr->next;
+      free(temp_ptr);
+      temp_ptr = temp_ptr2;
+    }
+
+    //Free the outer subgraph
+    shoot_subgraph_ptr temp = curr_graph->next;
+    free(curr_graph);
+    curr_graph = temp;
+
+  }
+    
 
 }
