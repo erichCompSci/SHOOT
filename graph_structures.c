@@ -286,7 +286,8 @@ void print_subgraph_info()
   int counter = 0;
   while(curr_subgraph)
   {
-    printf("Printing info for subgraph: %d\n", counter);
+    
+    printf("Printing info for subgraph: %d\n", ++counter);
     printf("Number of nodes: %d\n", curr_subgraph->number_of_nodes);
     printf("Teams involved: ");
     team_node_ptr curr_team = curr_subgraph->teams;
@@ -478,8 +479,7 @@ int make_shoot_graph()
     exit(1);
   }
 
-  shoot_subgraph_ptr temp_ptr = make_subgraphs(teams);
-  subgraphs = temp_ptr;
+  subgraphs = make_subgraphs(teams);
 
   return 1;
 }
