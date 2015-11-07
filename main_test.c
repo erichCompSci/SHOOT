@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "graph_structures.h"
+#include "shoot.h"
 
 int main(int argc, char** argv)
 {

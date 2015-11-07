@@ -1,17 +1,8 @@
-#include "graph_structures.h"
+#include "shoot.h"
 
 static int number_of_teams;
 static team_node_ptr teams;
 static shoot_subgraph_ptr subgraphs;
-
-typedef struct _coach_id_map_llist coach_id_map_llist;
-
-struct _coach_id_map_llist
-{
-  char * coach_name;
-  int coach_id;
-  coach_id_map_llist * next;
-};
 
 // This ugly concept is necessary to achieve my ideal architecture and prevent 
 // a large useless global data structure from hanging around
@@ -188,6 +179,15 @@ int read_entries(FILE * input_file)
 
   //Cleaning up here...
   _free_coach_linked_list(first_coach);
+
+
+  return 1;
+}
+
+int make_new_field_space(char * name, int number_of_teams, enum time_slot what_time)
+{
+
+
 
 
   return 1;

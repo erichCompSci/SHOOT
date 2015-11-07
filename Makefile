@@ -3,7 +3,7 @@ FLAGS = -Wall -g -std=c99
 
 all: main_test
 
-main_test: main_test.c graph_structures.c coloring_algorithm.c
+main_test: main_test.c shoot.c coloring_algorithm.c
 	$(CC) $(FLAGS) -o $@ $^
 
 
