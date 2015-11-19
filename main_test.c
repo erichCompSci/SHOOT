@@ -25,7 +25,18 @@ int main(int argc, char** argv)
 
 
   make_shoot_graph();
-  print_subgraph_info();
+  
+  make_new_field_space("Arizona", 5, SIX);
+  make_new_field_space("Iverson", 7, SIX);
+  make_new_field_space("Arizona", 5, SIX_THIRTY);
+  make_new_field_space("Iverson", 7, SIX_THIRTY);
+  make_new_field_space("Arizona", 25, SEVEN_THIRTY);
+  make_new_field_space("Iverson", 3, SEVEN_THIRTY);
+  make_new_field_space("Arizona", 4, EIGHT);
+  make_new_field_space("Iverson", 8, EIGHT);
+
+  print_field_info();
+  //print_subgraph_info();
   //print_team_node_info();
   //print_graph_representation();
 

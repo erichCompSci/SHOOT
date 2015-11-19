@@ -184,11 +184,15 @@ int read_entries(FILE * input_file)
   return 1;
 }
 
+
 int make_new_field_space(char * name, int number_of_teams, enum time_slot what_time)
 {
-
-
-
+  
+  if(!create_field(name, number_of_teams, what_time))
+  {
+    fprintf(stderr, "Could not create field %s\n", name);
+    return 0;
+  }
 
   return 1;
 }
@@ -301,6 +305,11 @@ void print_subgraph_info()
   }
 }
 
+
+void print_field_info()
+{
+  print_internal_field_info(); 
+}
 
 // Return 1 on success, 0 on failure.  We are placeing on the source node.
 static int _set_edge_on_node(int dest_offset, int source_offset)

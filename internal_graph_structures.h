@@ -55,11 +55,5 @@ struct _shoot_field_space
   shoot_field_space_ptr next;
 };
 
-struct _shoot_field_time
-{
-  int time_slot;
-  shoot_field_space_ptr first_field;
-  shoot_field_time_ptr next;
-};
 
 #endif

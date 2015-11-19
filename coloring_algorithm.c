@@ -1,5 +1,9 @@
 #include "coloring_algorithm.h"
 
+#define TIME_SLOT_SIZE 5
+
+static shoot_field_space fields[TIME_SLOT_SIZE];
+
 static int _get_size_of_graph(team_node_ptr teams)
 {
   int total_size = 0;
@@ -177,4 +181,64 @@ shoot_subgraph_ptr make_subgraphs(team_node_ptr teams)
 
   return first_subgraph;
   
+}
+
+
+int create_field(char * name, int number_of_spaces, int time_slot)
+{
+  shoot_field_space_ptr curr_space = &(fields[time_slot]);
+
+  while(curr_space->next)
+  {
+    curr_space = curr_space->next;
+  }
+
+  if(!curr_space->field_name)
+  {
+    curr_space->field_name = strdup(name);
+    curr_space->number_of_spaces = number_of_spaces;
+    curr_space->next = NULL;
+  }
+  else
+  {
+    curr_space->next = malloc(sizeof(shoot_field_space));
+    if(!curr_space->next)
+    {
+      fprintf(stderr, "Error: could not allocate field_space data structure!\n");
+      return 0;
+    }
+
+    curr_space->next->next = NULL;
+    curr_space->next->field_name = strdup(name);
+    curr_space->next->number_of_spaces = number_of_spaces;
+
+  }
+
+  return 1;
+}
+
+
+void print_internal_field_info()
+{
+  for(int i = 0; i < TIME_SLOT_SIZE; ++i)
+  {
+    shoot_field_space_ptr curr_field = &(fields[i]);
+    if(!curr_field->field_name)
+    {
+      printf("Field time slot %d is empty!\n\n", i);
+      continue;
+    }
+    
+    printf("Fields for timeslot %d:\n", i);
+
+    while(curr_field)
+    {
+      printf("Field name: %s\n", curr_field->field_name);
+      printf("Number of spaces: %d\n", curr_field->number_of_spaces);
+      printf("***********************\n");
+      curr_field = curr_field->next;
+    }
+
+    printf("\n");
+  }
 }
