@@ -1,7 +1,3 @@
-1) I need some type of field and size reporting function...but this will go into the
-   coloring algorithm
-2) I need to take an initial stab at the coloring algorithm
-   - I've decided on a greedy algorithm, I rebuilt my underlying data structure to make it easier
-     to merge nodes and have two teams at the same location
-
+1) I need to get some type of data structure for days of the week.
+2) I need to take a stab at the coloring algorithm.
 
