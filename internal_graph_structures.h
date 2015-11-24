@@ -52,6 +52,7 @@ struct _shoot_field_space
 {
   char * field_name;
   int number_of_spaces;
+  int days_avail;
   shoot_field_space_ptr next;
 };
 

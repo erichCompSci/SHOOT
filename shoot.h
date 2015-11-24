@@ -1,11 +1,24 @@
 #ifndef _GRAPH_DATA_STRUCTURES_H
 #define _GRAPH_DATA_STRUCTURES_H
 
+#ifndef _XOPEN_SOURCE
+#define _XOPEN_SOURCE 500
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include "internal_graph_structures.h"
 #include "coloring_algorithm.h"
+
+#ifndef DAYS_OF_WEEK
+#define DAYS_OF_WEEK
+#define MONDAY 0x1
+#define TUESDAY 0x2
+#define WEDNESDAY 0x4
+#define THURSDAY 0x8
+#define FRIDAY 0xc
+#endif
 
 //This data structure is for the users convienience, it is tied
 //to the field space variable in the internal code.  We need to think
