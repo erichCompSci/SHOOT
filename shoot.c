@@ -272,8 +272,10 @@ void print_graph_representation()
         
         if(curr_edge->team_id > curr_node->team_id)
         {
-          fprintf(output, "  %d->%d\n", curr_node->team_id, curr_edge->team_id);
-          if(curr_
+          fprintf(output, "  %d->%d", curr_node->team_id, curr_edge->team_id);
+          if(curr_edge->hard_edge)
+            fprintf(output, "  [color=red]");
+          fprintf(output, "\n");
         }
       }
     }
