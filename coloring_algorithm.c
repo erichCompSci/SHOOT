@@ -152,6 +152,8 @@ shoot_subgraph_ptr make_subgraphs(team_node_ptr teams)
       curr_subgraph = malloc(sizeof(shoot_subgraph));
       //Had to do this because unbelievably it got assigned a pointer to the first one
       curr_subgraph->next = NULL;
+      curr_subgraph->teams = NULL;
+      curr_subgraph->number_of_nodes = 0;
       if(!curr_subgraph)
       {
         fprintf(stderr, "Error: could not allocate a subgraph data struct!\n");
