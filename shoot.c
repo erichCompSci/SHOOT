@@ -185,10 +185,10 @@ int read_entries(FILE * input_file)
 }
 
 
-int make_new_field_space(char * name, int number_of_teams, enum time_slot what_time)
+int make_new_field_space(char * name, int number_of_teams, enum time_slot what_time, unsigned int which_days)
 {
   
-  if(!create_field(name, number_of_teams, what_time))
+  if(!create_field(name, number_of_teams, what_time, which_days))
   {
     fprintf(stderr, "Could not create field %s\n", name);
     return 0;
@@ -273,6 +273,7 @@ void print_graph_representation()
         if(curr_edge->team_id > curr_node->team_id)
         {
           fprintf(output, "  %d->%d\n", curr_node->team_id, curr_edge->team_id);
+          if(curr_
         }
       }
     }
@@ -312,7 +313,7 @@ void print_field_info()
 }
 
 // Return 1 on success, 0 on failure.  We are placeing on the source node.
-static int _set_edge_on_node(int dest_offset, int source_offset)
+static int _set_edge_on_node(int dest_offset, int source_offset, unsigned int hard_edge)
 {
   shoot_edge_ptr new_edge = malloc(sizeof(shoot_edge));
   if(!new_edge)
@@ -354,6 +355,7 @@ static int _set_edge_on_node(int dest_offset, int source_offset)
 
   new_edge->team_id = dest_offset;
   new_edge->other_node = dest_node;
+  new_edge->hard_edge = hard_edge;
   new_edge->next = NULL;
   return 1;
 }
@@ -391,9 +393,9 @@ static int _make_edges_by_coach()
         while(current_edge)
         {
           int which_node = current_edge->team_id;
-          if(!_set_edge_on_node(curr_team->team_id, which_node))
+          if(!_set_edge_on_node(curr_team->team_id, which_node, 1))
             return 0;
-          if(!_set_edge_on_node(which_node, curr_team->team_id))
+          if(!_set_edge_on_node(which_node, curr_team->team_id, 1))
             return 0;
 
           current_edge = current_edge->next;
@@ -401,9 +403,9 @@ static int _make_edges_by_coach()
         }
       }
 
-      if(!_set_edge_on_node(curr_team->team_id, earliest_coach->team_id))
+      if(!_set_edge_on_node(curr_team->team_id, earliest_coach->team_id, 1))
         return 0;
-      if(!_set_edge_on_node(earliest_coach->team_id, curr_team->team_id))
+      if(!_set_edge_on_node(earliest_coach->team_id, curr_team->team_id, 1))
         return 0;
 
     } 
@@ -429,7 +431,7 @@ static int _make_edges_by_level()
 
     while(next_team && (!(strncmp(next_team->team_age_group, curr_team->team_age_group, 3))))
     {
-      if(( next_team->team_level - curr_team->team_level) > 1)
+      if(( next_team->team_level - curr_team->team_level) > 2)
       {
         //We need to make sure their isn't already an edge between the two teams
         int should_we_add = 1;
@@ -457,9 +459,9 @@ static int _make_edges_by_level()
 
         if(should_we_add)
         {
-          if(!_set_edge_on_node(curr_team->team_id, next_team->team_id))
+          if(!_set_edge_on_node(curr_team->team_id, next_team->team_id, 0))
              return 0;
-          if(!_set_edge_on_node(next_team->team_id, curr_team->team_id))
+          if(!_set_edge_on_node(next_team->team_id, curr_team->team_id, 0))
              return 0;
         }
       }

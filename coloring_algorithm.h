@@ -15,7 +15,7 @@
 shoot_subgraph_ptr make_subgraphs(team_node_ptr teams);
 
 //Return 0 on failure, 1 on success
-int create_field(char * name, int number_of_spaces, int time_slot);
+int create_field(char * name, int number_of_spaces, int time_slot, unsigned int which_days);
 
 void print_internal_field_info();
 

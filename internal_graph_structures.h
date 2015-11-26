@@ -38,6 +38,7 @@ struct _shoot_edge
 {
   int team_id;
   team_node_ptr other_node;
+  unsigned int hard_edge;   //A 1 indicates a hard edge, 0 indicates soft edge.  Soft edges can have similar colored vertices.
   shoot_edge_ptr next;
 };
 
@@ -52,7 +53,7 @@ struct _shoot_field_space
 {
   char * field_name;
   int number_of_spaces;
-  int days_avail;
+  unsigned int days_avail;
   shoot_field_space_ptr next;
 };
 

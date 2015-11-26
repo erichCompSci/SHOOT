@@ -26,19 +26,19 @@ int main(int argc, char** argv)
 
   make_shoot_graph();
   
-  make_new_field_space("Arizona", 5, SIX);
-  make_new_field_space("Iverson", 7, SIX);
-  make_new_field_space("Arizona", 5, SIX_THIRTY);
-  make_new_field_space("Iverson", 7, SIX_THIRTY);
-  make_new_field_space("Arizona", 25, SEVEN_THIRTY);
-  make_new_field_space("Iverson", 3, SEVEN_THIRTY);
-  make_new_field_space("Arizona", 4, EIGHT);
-  make_new_field_space("Iverson", 8, EIGHT);
+  make_new_field_space("Arizona", 5, SIX, MONDAY | WEDNESDAY | THURSDAY | FRIDAY);
+  make_new_field_space("Iverson", 7, SIX, MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY);
+  make_new_field_space("Arizona", 5, SIX_THIRTY, MONDAY | TUESDAY | THURSDAY | FRIDAY);
+  make_new_field_space("Iverson", 7, SIX_THIRTY, MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY);
+  make_new_field_space("Arizona", 25, SEVEN_THIRTY, MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY);
+  make_new_field_space("Iverson", 3, SEVEN_THIRTY, TUESDAY | WEDNESDAY | THURSDAY | FRIDAY);
+  make_new_field_space("Arizona", 4, EIGHT, MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY);
+  make_new_field_space("Iverson", 8, EIGHT, MONDAY | WEDNESDAY | FRIDAY | TUESDAY );
 
   print_field_info();
   //print_subgraph_info();
   //print_team_node_info();
-  //print_graph_representation();
+  print_graph_representation();
 
   cleanup_graph();
 

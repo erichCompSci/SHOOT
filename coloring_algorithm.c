@@ -184,7 +184,7 @@ shoot_subgraph_ptr make_subgraphs(team_node_ptr teams)
 }
 
 
-int create_field(char * name, int number_of_spaces, int time_slot)
+int create_field(char * name, int number_of_spaces, int time_slot, unsigned int which_days)
 {
   shoot_field_space_ptr curr_space = &(fields[time_slot]);
 
@@ -197,6 +197,7 @@ int create_field(char * name, int number_of_spaces, int time_slot)
   {
     curr_space->field_name = strdup(name);
     curr_space->number_of_spaces = number_of_spaces;
+    curr_space->days_avail = which_days;
     curr_space->next = NULL;
   }
   else
@@ -211,6 +212,7 @@ int create_field(char * name, int number_of_spaces, int time_slot)
     curr_space->next->next = NULL;
     curr_space->next->field_name = strdup(name);
     curr_space->next->number_of_spaces = number_of_spaces;
+    curr_space->next->days_avail = which_days;
 
   }
 
@@ -220,6 +222,7 @@ int create_field(char * name, int number_of_spaces, int time_slot)
 
 void print_internal_field_info()
 {
+  char * temp_days[] = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
   for(int i = 0; i < TIME_SLOT_SIZE; ++i)
   {
     shoot_field_space_ptr curr_field = &(fields[i]);
@@ -235,7 +238,16 @@ void print_internal_field_info()
     {
       printf("Field name: %s\n", curr_field->field_name);
       printf("Number of spaces: %d\n", curr_field->number_of_spaces);
-      printf("***********************\n");
+      printf("Days available: ");
+      for(int j = 0; j < 5; ++j)
+      {
+        unsigned int bitshift = 0x1 << j;
+        if(curr_field->days_avail & bitshift)
+        {
+          printf("%s ", temp_days[j]);
+        }
+      }
+      printf("\n***********************\n");
       curr_field = curr_field->next;
     }
 
